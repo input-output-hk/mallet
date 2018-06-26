@@ -76,15 +76,11 @@ sendTransaction = function(tx) {
   tx.chainId = tx.chainId || 61;
   tx.nonce = tx.nonce || getNonce(from);
 
-  console.log(tx);
-
   const ethTx = new EthereumTx(tx);
-  console.log(ethTx);
   ethTx.sign(privateKey);
   const serializedTx = ethTx.serialize();
 
-  web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
-  return ethTx;
+  return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 }
 
 getReceipt = function(hash) {
