@@ -130,6 +130,10 @@ function thr0w(e) {
 }
 
 function start() {
+  if (!fs.existsSync(datadir)){
+    fs.mkdirSync(datadir);
+  }
+
   if (!fs.existsSync(keystore)){
     fs.mkdirSync(keystore);
   }
