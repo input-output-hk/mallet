@@ -11,10 +11,12 @@ const ReplHistory = require('repl.history');
 const datadir = path.join(os.homedir(), '.mallet-js');
 const keystore = path.join(datadir, 'keystore');
 
-selectedAccount = null;
+let selectedAccount = null;
+let lastTx = null;
 
-web3 = new Web3(new Web3.providers.HttpProvider('https://kevm-testnet.iohkdev.io:8546'))
-
+web3 = new Web3(new Web3.providers.HttpProvider('https://kevm-testnet.iohkdev.io:8546/'));
+//web3 = new Web3(new Web3.providers.HttpProvider('https://kevm-radek.kevm-private.mantis.iohkdev.io:8546'));
+//web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8546'));
 
 getBalance = function (addr) {
   return web3.eth.getBalance(resolveAddress(addr)).toString();
@@ -63,6 +65,10 @@ selectAccount = function(addr) {
   }
 }
 
+currentAccount = function() {
+  return selectedAccount;
+}
+
 getNonce = function(addr) {
   return web3.eth.getTransactionCount(resolveAddress(addr));
 }
@@ -73,18 +79,28 @@ sendTransaction = function(tx) {
 
   tx.gasPrice = tx.gasPrice || 5000000000;
   tx.gasLimit = tx.gasLimit || tx.gas || thr0w('gas must be explicitly provided');
-  tx.chainId = tx.chainId || 61;
-  tx.nonce = tx.nonce || getNonce(from);
+  //Set default chainId if EIP-155 is used
+  //tx.chainId = tx.chainId === undefined ? 61 : tx.chainId;
+  tx.nonce = tx.nonce === undefined ? getNonce(from) : tx.nonce;
 
   const ethTx = new EthereumTx(tx);
   ethTx.sign(privateKey);
   const serializedTx = ethTx.serialize();
 
-  return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
+  lastTx = tx;
+  const hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
+  lastTx.from = from;
+  lastTx.hash = hash;
+  return hash;
+}
+
+lastTransaction = function() {
+  return lastTx;
 }
 
 getReceipt = function(hash) {
-  return web3.eth.getTransactionReceipt(hash);
+  const resolvedHash = hash || lastTx.hash || thr0w('No TX recorded');
+  return web3.eth.getTransactionReceipt(resolvedHash);
 }
 
 function resolveAddress(addr) {
