@@ -1,6 +1,6 @@
 {
   "name": "mallet",
-  "version": "0.2.0",
+  "version": "2.0-alpha1",
   "description": "IELE/KEVM testnet CLI tool",
   "main": "mallet.js",
   "scripts": {
@@ -17,10 +17,14 @@
   },
   "homepage": "https://github.com/input-output-hk/mallet#readme",
   "dependencies": {
+    "auto-bind": "^1.2.1",
+    "commander": "^2.16.0",
     "ethereumjs-tx": "^1.3.5",
+    "fs-extra": "^6.0.1",
     "keythereum": "^1.0.4",
     "readline-sync": "^1.4.9",
     "repl.history": "^0.1.4",
+    "sleep": "^5.1.1",
     "web3": "0.20.6"
   }
 }

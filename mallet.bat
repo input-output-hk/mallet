@@ -1,1 +1,1 @@
-node mallet.js
+node cli.js %*
