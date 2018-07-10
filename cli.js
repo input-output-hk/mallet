@@ -5,8 +5,6 @@ const Repl = require('repl');
 const ReplHistory = require('repl.history');
 const program = require('commander');
 
-// 'https://staging.iele-private.mantis.iohkdev.io:8546/'
-// 'https://kevm-testnet.iohkdev.io:8546/'
 
 function parseArgs() {
   program
@@ -18,7 +16,7 @@ function start() {
   parseArgs();
   const datadir = program.datadir || path.join(os.homedir(), '.mallet2');
 
-  const mallet = new Mallet(program.args[0], datadir); 
+  const mallet = new Mallet(program.args[0], datadir);
   
   const repl = Repl.start('mallet> ');
 
@@ -34,7 +32,8 @@ function start() {
     'sendTransaction',
     'lastTransaction',
     'getReceipt',
-    'requestFunds'
+    'requestFunds',
+    'iele'
   ]
   repl.context.mallet = mallet;
   exportedProperties.forEach(prop => repl.context[prop] = mallet[prop]);

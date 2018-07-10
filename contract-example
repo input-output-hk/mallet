@@ -1,0 +1,85 @@
+pragma solidity ^0.4.0;
+
+contract Counter {
+    int x;
+    
+    function Counter () public {
+        x = 0;
+    }
+    
+    function incrementX(int a) external {
+        x = x + a;
+    }
+    function getX() external constant returns (int) {
+        return x;
+    }
+}
+
+
+curl -X POST --data '{\"jsonrpc\":\"2.0\", \"method\": \"sol2iele_asm\", \"params\": [\"counter.sol\", {\"counter.sol\": \"pragma solidity ^0.4.0; contract Counter {int x; function Counter () public {x = 0; } function incrementX(int a) external {x = x + a; } function getX() external constant returns (int) {return x; } }\"}], \"id\": 0}' https://5c177bzo9e.execute-api.us-east-1.amazonaws.com/prod
+
+Warning: This is a pre-release compiler version, please do not use it in production.\ncounter.sol:1:50: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use \\"constructor(...) { ... }\\" instead.\n ... function Counter () public {x = 0; } ... \n     ^----------------------------------^\n\n======= counter.sol:Counter =======\nIELE assembly:\ncontract \\"counter.sol:Counter\\" {\n\n@\\"x\\" = 1\n\ndefine @init() {\nentry:\n  %callvalue = call @iele.callvalue()\n  br %callvalue, throw\n  sstore 0, @\\"x\\"\n\nreturn:\n  ret void\n\nthrow:\n  revert -1\n}\n\ndefine public @\\"incrementX(int)\\"(%a_0) {\nentry:\n  %callvalue = call @iele.callvalue()\n  br %callvalue, throw\n  %x.val = sload @\\"x\\"\n  %tmp = add %x.val, %a_0\n  sstore %tmp, @\\"x\\"\n\nreturn:\n  ret void\n\nthrow:\n  revert -1\n}\n\ndefine public @\\"getX()\\"() {\nentry:\n  %callvalue = call @iele.callvalue()\n  br %callvalue, throw\n  %x.val = sload @\\"x\\"\n  %_1 = %x.val\n  br return\n\nreturn:\n  ret %_1\n\nthrow:\n  revert -1\n}\n\n}\n\n
+
+
+contract \"counter.sol:Counter\" {
+
+@\"x\" = 1
+
+define @init() {
+entry:
+  %callvalue = call @iele.callvalue()
+  br %callvalue, throw
+  sstore 0, @\"x\"
+
+return:
+  ret void
+
+throw:
+  revert -1
+}
+
+define public @\"incrementX(int)\"(%a_0) {
+entry:
+  %callvalue = call @iele.callvalue()
+  br %callvalue, throw
+  %x.val = sload @\"x\"
+  %tmp = add %x.val, %a_0
+  sstore %tmp, @\"x\"
+
+return:
+  ret void
+
+throw:
+  revert -1
+}
+
+define public @\"getX()\"() {
+entry:
+  %callvalue = call @iele.callvalue()
+  br %callvalue, throw
+  %x.val = sload @\"x\"
+  %_1 = %x.val
+  br return
+
+return:
+  ret %_1
+
+throw:
+  revert -1
+}
+
+}
+
+
+
+
+contract \"counter.sol:Counter\" {@\"x\" = 1 define @init() {entry: %callvalue = call @iele.callvalue() br %callvalue, throw sstore 0, @\"x\"return: ret void throw: revert -1 } define public @\"incrementX(int)\"(%a_0) {entry: %callvalue = call @iele.callvalue() br %callvalue, throw %x.val = sload @\"x\"%tmp = add %x.val, %a_0 sstore %tmp, @\"x\"return: ret void throw: revert -1 } define public @\"getX()\"() {entry: %callvalue = call @iele.callvalue() br %callvalue, throw %x.val = sload @\"x\"%_1 = %x.val br return return: ret %_1 throw: revert -1 } }
+
+
+
+curl -X POST --data '{"jsonrpc": "2.0", "method": "iele_asm", "params": ["counter.iele", {"counter.iele": "contract \"counter.sol:Counter\" {@\"x\" = 1 define @init() {entry: %callvalue = call @iele.callvalue() br %callvalue, throw sstore 0, @\"x\"return: ret void throw: revert -1 } define public @\"incrementX(int)\"(%a_0) {entry: %callvalue = call @iele.callvalue() br %callvalue, throw %x.val = sload @\"x\"%tmp = add %x.val, %a_0 sstore %tmp, @\"x\"return: ret void throw: revert -1 } define public @\"getX()\"() {entry: %callvalue = call @iele.callvalue() br %callvalue, throw %x.val = sload @\"x\"%_1 = %x.val br return return: ret %_1 throw: revert -1 } }"}], "id": 1}' https://5c177bzo9e.execute-api.us-east-1.amazonaws.com/prod
+
+
+
+{"jsonrpc": "2.0", "id": 1, "result": "00000091630369000F696E6372656D656E745828696E742969000667657458282967000000006600003400650002006180016101025511660001F60000660002620101F7016800010001660000340165000201610102541301001C6101025514660001F60000660002620102F7026800020000660000340065000200610101540A6013640001660001F6000103660002620101F701"}
+
