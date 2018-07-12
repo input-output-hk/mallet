@@ -3,43 +3,58 @@ const path = require('path');
 const os = require('os');
 const Repl = require('repl');
 const ReplHistory = require('repl.history');
-const program = require('commander');
+const prog = require('caporal');
+const opn = require('opn');
 
 
-function parseArgs() {
-  program
-    .option('-d, --datadir', 'Specify data directory')
-    .parse(process.argv);
+const exportedProperties = [
+  'web3', 
+  'listAccounts', 
+  'newAccount',
+  'importPrivateKey',
+  'getBalance',
+  'getNonce',
+  'selectAccount',
+  'currentAccount',
+  'sendTransaction',
+  'lastTransaction',
+  'getReceipt',
+  'requestFunds',
+  'iele'
+]
+
+function listCommands() {
+  const ieleCommands = ['iele.simpleTransfer', 'iele.contractCall', 'iele.createContract'];
+  const utils = ['help', 'listCommands'];
+  return exportedProperties.filter(x => x !== 'iele').concat(ieleCommands).concat(utils).sort();
 }
 
-function start() {
-  parseArgs();
-  const datadir = program.datadir || path.join(os.homedir(), '.mallet2');
+function help() {
+  opn('https://github.com/input-output-hk/mallet/blob/master/README.md');
+}
 
-  const mallet = new Mallet(program.args[0], datadir);
+function start(args, opts) {
+  const mallet = new Mallet(args.testnet, opts.datadir);
   
   const repl = Repl.start('mallet> ');
 
-  const exportedProperties = [
-    'web3', 
-    'listAccounts', 
-    'newAccount',
-    'importPrivateKey',
-    'getBalance',
-    'getNonce',
-    'selectAccount',
-    'currentAccount',
-    'sendTransaction',
-    'lastTransaction',
-    'getReceipt',
-    'requestFunds',
-    'iele'
-  ]
   repl.context.mallet = mallet;
+  repl.context.listCommands = listCommands;
+  repl.context.help = help;
   exportedProperties.forEach(prop => repl.context[prop] = mallet[prop]);
 
-  ReplHistory(repl, path.join(datadir, '.history'));
+  ReplHistory(repl, path.join(opts.datadir, '.history'));
 }
 
 
-start();
+prog
+  .bin('mallet')
+  .description('command line utility for KEVM/IELE testnets')
+  .version(require('./package.json').version)
+  .argument('<testnet>', "JSON RPC endpoint to connect. Possible values are: 'kevm', 'iele', or a custom HTTP(S) URL")
+  .option('-d, --datadir', 'Specify data directory', prog.STRING, path.join(os.homedir(), '.mallet2'))
+  .action(function(args, opts, logger) {
+    start(args, opts);
+  });
+
+prog.parse(process.argv);
