@@ -1,0 +1,43 @@
+contract "sendEther" {
+
+define @init() {
+entry:
+
+return:
+  ret void
+}
+
+define public @"a(address,uint)"(%addr_0, %amount_1) {
+entry:
+  %callvalue = call @iele.callvalue()
+  br %callvalue, throw
+  %out.of.range = cmp lt %addr_0, 0
+  br %out.of.range, throw
+  %out.of.range = cmp gt %addr_0, 1461501637330902918203684832716283019655932542975
+  br %out.of.range, throw
+  %out.of.range1 = cmp lt %amount_1, 0
+  br %out.of.range1, throw
+  br %amount_1, if.true
+  %tmp = 2300
+  br if.end
+
+if.true:
+  %tmp = 0
+
+if.end:
+  %status = call @"deposit" at %addr_0 () send %amount_1, gaslimit %tmp
+  %tmp2 = iszero %status
+  %this = call @iele.address()
+  %type.converted = twos 20, %this
+  %balance = call @iele.balance(%type.converted)
+  %ret_2 = %balance
+  br return
+
+return:
+  ret %ret_2
+
+throw:
+  revert -1
+}
+
+}

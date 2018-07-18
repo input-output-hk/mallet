@@ -5,6 +5,7 @@ const Repl = require('repl');
 const ReplHistory = require('repl.history');
 const prog = require('caporal');
 const opn = require('opn');
+const rlp = require('./lib/rlp.js');
 
 
 const exportedProperties = [
@@ -24,8 +25,8 @@ const exportedProperties = [
 ]
 
 function listCommands() {
-  const ieleCommands = ['iele.simpleTransfer', 'iele.contractCall', 'iele.createContract'];
-  const utils = ['help', 'listCommands'];
+  const ieleCommands = ['iele.simpleTransfer', 'iele.contractCall', 'iele.createContract, iele.compile'];
+  const utils = ['help', 'listCommands', 'rlp'];
   return exportedProperties.filter(x => x !== 'iele').concat(ieleCommands).concat(utils).sort();
 }
 
@@ -41,6 +42,7 @@ function start(args, opts) {
   repl.context.mallet = mallet;
   repl.context.listCommands = listCommands;
   repl.context.help = help;
+  repl.context.rlp = rlp;
   exportedProperties.forEach(prop => repl.context[prop] = mallet[prop]);
 
   ReplHistory(repl, path.join(opts.datadir, '.history'));

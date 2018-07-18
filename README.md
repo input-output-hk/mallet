@@ -343,6 +343,38 @@ mallet> getReceipt()
 ```
 
 
+### Compiling contracts
+
+Compiling contracts is currently only supported for IELE, and only for a single source file. Both IELE Assembly and Solidity (using Solidity to IELE compiler) contracts can be compiled. Both compilers are services of the testnet which Mallet connects to (no additional dependencies).
+
+#### `iele.compile`
+
+Sends the source code from the provided file path to the compiler. The mode of compilation is determined by the extension of the source file:
+* `.sol`: 2 step compilation: Solidity to IELE -> IELE Assembly
+* `.iele`: direct IELE Assembly
+
+```
+mallet> iele.compile('test/contracts/sendEther.sol')
+{ source:   '// Simple contract ...'
+  solidityCompilerOutput: 'Warning: This is a pre-release compiler version...',
+  error: false,
+  ieleCode: 'contract "main.sol:test" ...',
+  bytecode: '000000AA630469000F612...' }
+```
+
+The compiled contract is available in the `bytecode` property, which can then be used as an argument to `iele.createContract`. In case of compilation failure `error` property will be set to `true` and the relevant compiler output can be found in `solidityCompilerOutput`.
+
+In case of direct IELE assembly compilation the compiler API is simpler:
+
+```
+mallet> iele.compile('test/contracts/sendEther.iele')
+{ source: 'contract "sendEther" {\n\ndefine @init() ...',
+  result: '000000AA630469000...' }
+```
+
+The `result` property will contain either the correctly compiled bytecode, or textual error information.
+
+
 ## Importing as library
 
 See [basic-kevm.js](test/basic-kevm.js) for an example of using Mallet in script. 
