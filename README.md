@@ -232,6 +232,8 @@ mallet> getReceipt('0x00039c02c1ca8cb2b25226f74887fc0afcf485797de65afbc105dab134
 
 Note that the receipt may not be readily available, indicated with `null` value, as it takes time for a transaction to be forged.
 
+TODO: note `decodedReturnData`
+
 #### `requestFunds`
 
 This command is different, in that it doesn't interact with JSON RPC (Web3). Instead, it calls the testnet [Faucet](http://testnet.iohkdev.io/goguen/faucet/) to obtain funds for a given account. Returns the transaction hash.
