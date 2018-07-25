@@ -210,8 +210,10 @@ mallet> getReceipt()
   gasUsed: 21272,
   contractAddress: null,
   logs: [],
-  status: '0x00',
-  returnData: '0x' }
+  statusCode: '0x00',
+  status: true,
+  returnData: [],
+  rawReturnData: '0xc0' }
 ```
 
 ```
@@ -220,19 +222,12 @@ mallet> getReceipt('0x00039c02c1ca8cb2b25226f74887fc0afcf485797de65afbc105dab134
    '0x00039c02c1ca8cb2b25226f74887fc0afcf485797de65afbc105dab13497ba57',
   transactionIndex: 0,
   blockNumber: 295367,
-  blockHash:
-   '0x7cc78c2593fefdac318893264cf8a05c792f8deb41dc8e35fc5b783fc45b4085',
-  cumulativeGasUsed: 21272,
-  gasUsed: 21272,
-  contractAddress: null,
-  logs: [],
-  status: '0x00',
-  returnData: '0x' }  
+  ...  
 ```
 
 Note that the receipt may not be readily available, indicated with `null` value, as it takes time for a transaction to be forged.
 
-TODO: note `decodedReturnData`
+If the receipt is for a IELE transaction (technically if it has `statusCode` field and the return data is RLP-decodable) then `returnData` field contains an array of integers, and raw undecoded data (hex string) is available in `rawReturnData`.
 
 #### `requestFunds`
 
@@ -275,14 +270,14 @@ mallet> getBalance('0xd7f3583b8805cfbe0979050f5a1b3587a8fee900')
 ```
 
 
-#### `iele.createContract`
+#### `iele.deployContract`
 
 Creates a new contract with the bytecode provided in `code` field, and optional constructor arguments as `args` - an array of integers.
 
 ```
 mallet> let code = '00000091630369000F696E6372656D656E745828696E742969000667657458282967000000006600003400650002006180016101025511660001F60000660002620101F7016800010001660000340165000201610102541301001C6101025514660001F60000660002620102F7026800020000660000340065000200610101540A6013640001660001F6000103660002620101F701'
 undefined
-mallet> iele.createContract({gas: 1000000, value: 0, code: code, args: []})
+mallet> iele.deployContract({gas: 1000000, value: 0, code: code, args: []})
 Enter password:
 '0xb13e7783c86dda3f880b2d875201a1d4c4f7f0ae5b085e320dc32a7688ce394d'
 mallet> getReceipt()
@@ -300,12 +295,12 @@ mallet> getReceipt()
   returnData: '0xd59479c7f680aa944545744f611a1a9770426903cee9' }
 ```
 
-#### `iele.contractCall`
+#### `iele.callContract`
 
 Calls function `func` of a contract at `to` address, with optional arguments `args` - an array of integers.
 
 ```
-mallet> iele.contractCall({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'getX()', args: []})
+mallet> iele.callContract({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'getX()', args: []})
 Enter password:
 '0x767f44039fbb67503a18688c38576fe0396dc55e18d057b7bef86d9a62fffb57'
 mallet> getReceipt()
@@ -319,12 +314,14 @@ mallet> getReceipt()
   gasUsed: 21838,
   contractAddress: null,
   logs: [],
-  status: '0x00',
+  statusCode: '0x00',
+  status: true,
+  returnData: [ 0n ],
   returnData: '0xc100' }
 ```
 
 ```
-mallet> iele.contractCall({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'incrementX(int)', args: [13]})
+mallet> iele.callContract({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'incrementX(int)', args: [13]})
 Enter password:
 '0x9592150326c811ad71e55a007b589763c6dbd6365eae2cb66f6532ca780b0799'
 mallet> getReceipt()
@@ -340,8 +337,58 @@ mallet> getReceipt()
   gasUsed: 28263,
   contractAddress: null,
   logs: [],
-  status: '0x00',
-  returnData: '0xc0' }
+  statusCode: '0x00',
+  status: true,
+  returnData: [],
+  rawReturnData: '0xc0' }
+```
+
+#### `iele.constantCall`
+
+This command is equivalent to `web3.eth.call` except with IELE-specific data encoding. It can be used for calling contract functions that do not change the state (Solidity's `view` functions). No account has to be selected to run this command. The TX argument is the same as for `iele.callContract`. The command returns decoded array of integers comprising the function return data.
+
+```
+mallet> iele.constantCall({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'getX()', args: []})
+[ 0n ]
+```
+
+#### Note on IELE function names
+
+Solidity functions compiled to IELE have a naming convention that includes function the original function name along with its argument types (this is to support function overloading). Examples
+
+| Solidity function header | IELE function name |
+|--------------------------|--------------------|
+| `function getX() returns (int)` | `getX()`    |
+| `function incrementX(int i) | `incrementX(int)|
+| `function somethingComplex(address a, bytes b, int[] i) returns (string, int)` | `somethingComplex(address,bytes,int[])`|
+
+
+#### Note on type encoding
+
+IELE functions by design accept and return array of unbounded integers. To encode/decode different Solidity to/from integers use `iele.enc`/`iele.dec`. Both functions take a value to be converted and a Solidity type as a string. Consider a Solidity function like this:
+
+```
+function dummyFunc(address a, bytes b, int[] i) public pure returns (string, int) {
+    return ("I'm a dummy", i[0]);
+}
+```
+
+Here's how you can use `iele.enc` and `iele.dec`:
+
+
+```
+mallet> contractAddress = '0x9785367f32a97ec34090307368a4368f2ab4bc01'
+'0x9785367f32a97ec34090307368a4368f2ab4bc01'
+mallet> args = [iele.enc(contractAddress, 'address'), iele.enc('0xcafebabe', 'bytes'), iele.enc([42, -1], 'int[]')]
+[ 865028352852446724060954038272434378925942291457n,
+  4222355708056220710451082685618494097063946n,
+  1455792646560079078679811948732730198604464062977n ]
+mallet> result = iele.constantCall({to: contractAddress, gas: 1000000, func: 'dummyFunc(address,bytes,int[])', args: args})
+[ 1631388912461674177904633800030782296862752779n, 42n ]
+mallet> iele.dec(result[0], 'string')
+'I\'m a dummy'
+mallet> iele.dec(result[1], 'int')
+42
 ```
 
 
