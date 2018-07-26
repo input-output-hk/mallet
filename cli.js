@@ -35,6 +35,9 @@ function help() {
 }
 
 function start(args, opts) {
+  console.log(`Mallet ${require('./package.json').version} - IELE/KEVM testnet utility\n` +
+    `Type 'help()' to view the online documentation or 'listCommands()' to view available commands\n`);
+
   const mallet = new Mallet(args.testnet, opts.datadir);
   
   const repl = Repl.start('mallet> ');
