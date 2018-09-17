@@ -1,32 +1,39 @@
+
 ## Mallet
 
-Mallet is a command line utility for interacting with IELE and KEVM testnets. It is based on node.js REPL which exposes several handy functions along with libraries like Web3. Mallet can also be included as a library in custom JavaScript programs.
+Mallet, the minimum wallet, is a command line utility for deploying smart contracts and interacting with the [Cardano IELE and KEVM testnets](https://testnet.iohkdev.io/) developed by IOHK. Mallet is written in Javascript and is based on the Node.js REPL, so it gives access to some handy functions as well as libraries such as Web3. Mallet can also be included as a library in your own JavaScript programs.
 
 ## Installing
 
-Mallet requires Node.js version >=10.4.0. Clone this repository and from main directory run:
+Mallet requires Node.js version 10.4.0 or later. There are more detailed instructions for installing Node.js and Mallet in two places.
+
+First, there are pages on [installing Node.js and Mallet](https://testnet.iohkdev.io/iele/) along with a tutorial.
+
+Second, there is a video, [Getting Started with Mallet](https://www.youtube.com/watch?v=Tp4Z0RbjSa8). 
+
+Once you have Node.js installed, clone the [Mallet repository](https://github.com/input-output-hk/mallet) and install it with npm. Then, from the main directory run:
 
 ```
 $ npm install
 ```
 
-This will download and install all dependencies.
+This will download and install all the dependencies.
 
-## Running CLI
+## Running the command line interface
 
-Type the following to see Mallet's usage help:
+Type the following to see Mallet's help file:
 
 ```
 $ ./mallet --help
 ```
 
-Running Mallet with proper arguments like so:
+Running Mallet with proper arguments will open a Node.js REPL session with the Mallet commands available. 
 
 ```
 ./mallet iele
 ```
 
-will open Node.js REPL session with mallet commands imported into scope. Everything typed there has to be valid JavaScript:
+Everything has to be valid JavaScript:
 
 ```
 mallet> 1 + 1
@@ -45,23 +52,23 @@ undefined
 
 ## Caveats
 
-* Mallet is above all meant as a command line tool, to be run on Node.js. While importing it in a browser may be possible, it has not been tested and is not officially supported.
-* It takes advantage of `BigInt` type which is a fairly new addition to V8 engine: https://v8project.blogspot.com/2018/05/bigint.html
-* To fit the requirements of an interactive shell environment all Mallet's functions are synchronous
-* Because of strange issue in the embeddable Node.js REPL, a slightly augmented version of [rlp.js](https://github.com/ethereumjs/rlp) has been put in the `lib` folder
+* Mallet is a command line tool to be run on Node.js. Although it may be possible to import Mallet into a browser, this has not been tested and is not officially supported.
+* Mallet takes advantage of `BigInt` arbitrary-precision integers, which were added to the [V8 Javascript engine in May 2018](https://v8project.blogspot.com/2018/05/bigint.html).
+* To meet the requirements of an interactive shell environment, all Mallet's functions are synchronous.
+* Because of an issue with the embeddable Node.js REPL, an augmented version of [rlp.js](https://github.com/ethereumjs/rlp) has been put in the `lib` folder
 
 
 ## Mallet commands
 
-Technically speaking the commands are simply functions and properties of Mallet object. We tend refer to them as commands as that reflects how Mallet is used
+Technically speaking, the ‘commands’ discussed here are actually functions and properties of a Mallet object. We refer to them as commands because that reflects how Mallet is used.
 
 ### Getting help
 
-When running Mallet in CLI, these commands may be useful.
+When running Mallet, these commands may be useful.
 
 #### `help`
 
-Opens this README in default OS browser.
+Opens the README file you are reading in your default browser:
 
 ```
 mallet> help()
@@ -71,7 +78,7 @@ undefined
 
 #### `listCommands`
 
-Lists available commands ()
+Lists the available commands: 
 
 ```
 mallet> listCommands()
@@ -97,11 +104,11 @@ mallet> listCommands()
 
 ### Account management
 
-These commands operate on the local keystore and do not connect to the testnets.
+These management commands operate on the local keystore and do not connect to a testnet.
 
 #### `newAccount`
 
-Creates an random keypair for a new managed account. The private key is stored in the datadir encrypted with the provided password. Returns the corresponding accounts address.
+Creates a random key pair for a new managed account. The private key is stored in the datadir that is encrypted with the provided password. The command returns the corresponding account’s address.
 
 ```
 mallet> newAccount()
@@ -110,16 +117,10 @@ Repeat password:
 '0x8cc7c261b5dda47755ac9629ec32bba0ab4d1d32'
 ```
 
-// TODO: should this be shown?
-```
-mallet> newAccount('passw0rd')
-'0x547cffc389662a617abf69654c4e1b29adeefd47'
-```
-
 
 #### `importPrivateKey`
 
-Imports a known private key as a managed account. The private key is stored in the datadir encrypted with the provided password. Returns the corresponding accounts address.
+Imports a known private key as a managed account. The private key is stored in the datadir that is encrypted with the provided password. This import command returns the corresponding account’s address.
 
 ```
 mallet> importPrivateKey()
@@ -131,7 +132,7 @@ Repeat password:
 
 #### `listAccounts`
 
-Lists all managed accounts' addresses:
+Lists the addresses of all managed accounts:
 
 ```
 mallet> listAccounts()
@@ -144,7 +145,7 @@ mallet> listAccounts()
 
 #### `selectAccount`
 
-Selects an accounts for commands like `sendTransaction`, `getBalance`, `requestFunds`:
+Selects an account for commands such as `sendTransaction`, `getBalance`, `requestFunds`:
 
 ```
 mallet> selectAccount('0xfc7e805d72ca57aff872cd010a4c9c5e8e8f22f2')
@@ -160,11 +161,11 @@ mallet> currentAccount()
 
 ### Interacting with the testnet
 
-The following commands interact with Mantis nodes via JSON RPC (using Web3 library).
+The following commands interact with nodes on Mantis, the Ethereum client, via the JSON remote procedure call (RPC) protocol (using the Web3 library).
 
 #### `getBalance`
 
-Show balance of an account:
+Show the balance of an account:
 ```
 mallet> currentAccount()
 '0xfc7e805d72ca57aff872cd010a4c9c5e8e8f22f2'
@@ -176,7 +177,7 @@ mallet> getBalance('0x60950641e7382a120c8825464391da3b84db2a86')
 
 #### `sendTransaction`
 
-Sends a transaction signed with selected accounts key. Returns the transaction hash. Requires password to decrypt the private key.
+Sends a transaction signed with the selected account’s key and returns the transaction hash. This command requires a password to decrypt the private key.
 
 ```
 mallet> tx = {
@@ -191,7 +192,7 @@ mallet> sendTransaction(tx)
 
 #### `getReceipt`
 
-Obtain a receipt of a transaction with a given hash. If hash is not provided, the hash of a most recent transaction will be used.
+Obtains a receipt of a transaction with a given hash. If a hash is not provided, the hash of the most recent transaction will be used.
 
 ```
 mallet> sendTransaction(tx)
@@ -230,11 +231,13 @@ mallet> getReceipt('0x00039c02c1ca8cb2b25226f74887fc0afcf485797de65afbc105dab134
   returnData: '0x' }  
 ```
 
-Note that the receipt may not be readily available, indicated with `null` value, as it takes time for a transaction to be forged.
+Note that the receipt may not be readily available, indicated with `null` value, because it takes time for a transaction to be forged.
 
 #### `requestFunds`
 
-This command is different, in that it doesn't interact with JSON RPC (Web3). Instead, it calls the testnet [Faucet](http://testnet.iohkdev.io/goguen/faucet/) to obtain funds for a given account. Returns the transaction hash.
+
+
+This command is different, in that it doesn't interact with the JSON RPC. Instead, it calls the testnet [Faucet](https://testnet.iohkdev.io/iele/faucet/) to obtain funds for a given account. It returns the transaction hash.
 
 ```
 mallet> currentAccount()
@@ -256,11 +259,11 @@ Thrown: Faucet error: The user has sent too many requests in a given amount of t
 
 ### IELE commands
 
-The following commands are variations of `sendTransaction`, which take care of proper data encoding for the IELE VM. In all cases the argument transaction object is the same as in the case of `sendTransaction` except for the `data` field.
+The following commands are variations of `sendTransaction`. They ensure that data is properly encoded for the IELE virtual machine. The argument transaction object is the same as in the case of `sendTransaction`, except for the `data` field.
 
 #### `iele.simpleTransfer`
 
-Value transfer between accounts, which technically means calling `deposit` function of IELE VM on the recipient's account.
+This transfers value between accounts Technically, this calls the `deposit` function of the IELE virtual machine on the recipient's account.
 
 ```
 mallet> getBalance('0xd7f3583b8805cfbe0979050f5a1b3587a8fee900')
@@ -275,7 +278,7 @@ mallet> getBalance('0xd7f3583b8805cfbe0979050f5a1b3587a8fee900')
 
 #### `iele.createContract`
 
-Creates a new contract with the bytecode provided in `code` field, and optional constructor arguments as `args` - an array of integers.
+Creates a contract with the bytecode provided in the `code` field, with optional constructor arguments as `args` – an array of integers.
 
 ```
 mallet> let code = '00000091630369000F696E6372656D656E745828696E742969000667657458282967000000006600003400650002006180016101025511660001F60000660002620101F7016800010001660000340165000201610102541301001C6101025514660001F60000660002620102F7026800020000660000340065000200610101540A6013640001660001F6000103660002620101F701'
@@ -300,7 +303,7 @@ mallet> getReceipt()
 
 #### `iele.contractCall`
 
-Calls function `func` of a contract at `to` address, with optional arguments `args` - an array of integers.
+Calls function `func` of a contract at the `to` address.  As with the previous command, there are optional arguments, `args`, as an array of integers.
 
 ```
 mallet> iele.contractCall({to: '0x79c7f680aa944545744f611a1a9770426903cee9', gas: 1000000, func: 'getX()', args: []})
@@ -345,13 +348,13 @@ mallet> getReceipt()
 
 ### Compiling contracts
 
-Compiling contracts is currently only supported for IELE, and only for a single source file. Both IELE Assembly and Solidity (using Solidity to IELE compiler) contracts can be compiled. Both compilers are services of the testnet which Mallet connects to (no additional dependencies).
+Compiling contracts is currently only supported for IELE, and only for a single source file. Both IELE assembly language and Solidity (using a Solidity-to-IELE compiler) contracts can be compiled. Both compilers are services of the testnet that Mallet connects to (there are no additional dependencies).
 
 #### `iele.compile`
 
 Sends the source code from the provided file path to the compiler. The mode of compilation is determined by the extension of the source file:
-* `.sol`: 2 step compilation: Solidity to IELE -> IELE Assembly
-* `.iele`: direct IELE Assembly
+* `.sol`:  two-step compilation: Solidity to IELE and then to IELE assembly
+* `.iele`: direct to IELE assembly
 
 ```
 mallet> iele.compile('test/contracts/sendEther.sol')
@@ -362,9 +365,9 @@ mallet> iele.compile('test/contracts/sendEther.sol')
   bytecode: '000000AA630469000F612...' }
 ```
 
-The compiled contract is available in the `bytecode` property, which can then be used as an argument to `iele.createContract`. In case of compilation failure `error` property will be set to `true` and the relevant compiler output can be found in `solidityCompilerOutput`.
+The compiled contract is available in the `bytecode` property, which can then be used as an argument to `iele.createContract`. In the case of a compilation failure, the `error` property will be set to `true` and the relevant compiler output can be found in `solidityCompilerOutput`.
 
-In case of direct IELE assembly compilation the compiler API is simpler:
+With direct IELE assembly compilation, the compiler interface is simpler:
 
 ```
 mallet> iele.compile('test/contracts/sendEther.iele')
@@ -379,8 +382,20 @@ The `result` property will contain either the correctly compiled bytecode, or te
 
 See [basic-kevm.js](test/basic-kevm.js) for an example of using Mallet in script. 
 
-Mallet is not currently published to NPM repository, but it can still be installed in your Node.js project, by point `npm` to the cloned git repository folder:
+Mallet is not currently published to the NPM repository, but it can still be installed in your Node.js project, by pointing `npm` to the cloned git repository folder:
 
 ```
 $ npm install path/to/mallet
 ```
+
+## Need more help?
+
+As mentioned before, the IELE testnet pages have detailed instructions and a rather good video:
+
+* Installing Node.js and Mallet, plus a tutorial from: https://testnet.iohkdev.io/iele/
+
+* Getting Started with Mallet video: https://www.youtube.com/watch?v=Tp4Z0RbjSa8
+
+* The Mallet repository is here: https://github.com/input-output-hk/mallet
+
+* IOHK provides support on using IELE and the testnet. Details at: https://testnet.iohkdev.io/iele/resources/support-and-help/
