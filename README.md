@@ -11,26 +11,26 @@ First, there are pages on [installing Node.js and Mallet](https://testnet.iohkde
 
 Second, there is a video, [Getting Started with Mallet](https://www.youtube.com/watch?v=Tp4Z0RbjSa8). 
 
-Once you have Node.js installed, clone the [Mallet repository](https://github.com/input-output-hk/mallet) and install it with npm. Then, from the main directory run:
+Once you have Node.js installed, run:
 
 ```
-$ npm install
+$ npm install -g @iohk/mallet
 ```
 
 This will download and install all the dependencies.
 
 ## Running the command line interface
 
-Type the following to see Mallet's help file:
+Type the following to see Mallet's usage help:
 
 ```
-$ ./mallet --help
+$ mallet --help
 ```
 
 Running Mallet with proper arguments will open a Node.js REPL session with the Mallet commands available. 
 
 ```
-./mallet iele
+mallet iele
 ```
 
 Everything has to be valid JavaScript:
@@ -380,13 +380,13 @@ The `result` property will contain either the correctly compiled bytecode, or te
 
 ## Importing as library
 
-See [basic-kevm.js](test/basic-kevm.js) for an example of using Mallet in script. 
-
-Mallet is not currently published to the NPM repository, but it can still be installed in your Node.js project, by pointing `npm` to the cloned git repository folder:
+To use Mallet as library add:
 
 ```
-$ npm install path/to/mallet
+const Mallet = require('@iohk/mallet');
 ```
+
+in your script. See [test/basic-kevm.js](test/basic-kevm.js) for an example of using Mallet in a script. 
 
 ## Need more help?
 
