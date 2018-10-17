@@ -5,9 +5,14 @@ const path = require('path');
 const os = require('os');
 const Repl = require('repl');
 const ReplHistory = require('repl.history');
-const prog = require('caporal');
+const commander = require('commander');
 const opn = require('opn');
 const rlp = require('./lib/rlp.js');
+const program = {
+  name: 'mallet',
+  version: require('./package.json').version,
+  description: 'IELE/KEVM testnet utility'
+}
 
 
 const exportedProperties = [
@@ -36,13 +41,13 @@ function help() {
   opn('https://github.com/input-output-hk/mallet/blob/master/README.md');
 }
 
-function start(args, opts) {
-  console.log(`Mallet ${require('./package.json').version} - IELE/KEVM testnet utility\n` +
+function start(datadir, testnet) {
+  console.log(`${program.name} ${program.version} - ${program.description}\n` +
     `Type 'help()' to view the online documentation or 'listCommands()' to view available commands\n`);
 
-  const mallet = new Mallet(args.testnet, opts.datadir);
+  const mallet = new Mallet(testnet, datadir);
   
-  const repl = Repl.start('mallet> ');
+  const repl = Repl.start(program.name + '> ');
 
   repl.context.mallet = mallet;
   repl.context.listCommands = listCommands;
@@ -50,18 +55,20 @@ function start(args, opts) {
   repl.context.rlp = rlp;
   exportedProperties.forEach(prop => repl.context[prop] = mallet[prop]);
 
-  ReplHistory(repl, path.join(opts.datadir, '.history'));
+  ReplHistory(repl, path.join(datadir, '.history'));
 }
 
+commander
+  .name(program.name)
+  .description(program.description)
+  .version(program.version)
+  .option('-d, --datadir <path>', 'Data directory', path.join(os.homedir(), '.mallet2'))
+  .arguments('<testnet>')
+  .parse(process.argv);
 
-prog
-  .bin('mallet')
-  .description('command line utility for KEVM/IELE testnets')
-  .version(require('./package.json').version)
-  .argument('<testnet>', "JSON RPC endpoint to connect. Possible values are: 'kevm', 'iele', or a custom HTTP(S) URL")
-  .option('-d, --datadir', 'Specify data directory', prog.STRING, path.join(os.homedir(), '.mallet2'))
-  .action(function(args, opts, logger) {
-    start(args, opts);
-  });
-
-prog.parse(process.argv);
+if(commander.args.length != 1) {
+  commander.help();
+}
+else {
+  start(commander.datadir, commander.args[0]);
+}
