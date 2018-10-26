@@ -1,6 +1,6 @@
 {
   "name": "@iohk/mallet",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "IELE/KEVM testnet CLI tool",
   "main": "./lib/mallet.js",
   "bin": {
@@ -12,6 +12,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/input-output-hk/mallet.git"
+  },
+  "engines": {
+    "node": ">=10.4.0",
+    "npm": ">=6.0.0"
   },
   "author": "",
   "license": "MIT",

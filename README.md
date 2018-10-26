@@ -14,10 +14,10 @@ Second, there is a video, [Getting Started with Mallet](https://www.youtube.com/
 Once you have Node.js installed, run:
 
 ```
-$ npm install -g @iohk/mallet
+$ npm install -g --engine-strict @iohk/mallet
 ```
 
-This will download and install all the dependencies.
+This will download and install all the dependencies. The --engine-strict flag makes sure you have the required version of Node installed.
 
 ## Running the command line interface
 
