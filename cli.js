@@ -27,7 +27,7 @@ const exportedProperties = [
 ]
 
 function listCommands() {
-  const ieleCommands = ['iele.simpleTransfer', 'iele.contractCall', 'iele.createContract, iele.compile'];
+  const ieleCommands = ['iele.simpleTransfer', 'iele.callContract', 'iele.deployContract', 'iele.constantCall', 'iele.compile'];
   const utils = ['help', 'listCommands', 'rlp'];
   return exportedProperties.filter(x => x !== 'iele').concat(ieleCommands).concat(utils).sort();
 }
