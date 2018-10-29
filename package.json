@@ -13,6 +13,10 @@
     "type": "git",
     "url": "git+https://github.com/input-output-hk/mallet.git"
   },
+  "engines": {
+    "node": ">=10.4.0",
+    "npm": ">=6.0.0"
+  },
   "author": "",
   "license": "MIT",
   "bugs": {
