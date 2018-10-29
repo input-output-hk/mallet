@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Mallet = require('./lib/mallet.js');
 const path = require('path');
 const os = require('os');

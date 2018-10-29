@@ -1,8 +1,11 @@
 {
-  "name": "mallet",
-  "version": "2.1.0-alpha1",
+  "name": "@iohk/mallet",
+  "version": "2.1.0",
   "description": "IELE/KEVM testnet CLI tool",
   "main": "./lib/mallet.js",
+  "bin": {
+    "mallet": "./cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
