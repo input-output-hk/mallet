@@ -5,7 +5,29 @@ Mallet, the minimum wallet, is a command line utility for deploying smart contra
 
 ## Installing
 
-Mallet requires Node.js version 10.4.0 or later. There are more detailed instructions for installing Node.js and Mallet in two places.
+We have tested Mallet with Node.js version `10.16.3`. The repository contains a proper `.nvmrc` file, so you can call [nvm](https://github.com/nvm-sh/nvm) to use this particular version, provided it is already installed in your system.
+
+```
+$ git clone https://github.com/input-output-hk/mallet
+
+$ cd mallet
+
+$ cat .nvmrc
+10.16.3
+
+$ nvm use
+Found '/tmp/mallet/.nvmrc' with version <10.16.3>
+Now using node v10.16.3 (npm v6.14.5)
+
+$ npm install
+
+$ ./mallet -d . http://127.0.0.1:8546
+```
+
+The last step uses mallet to connect to a local Mantis client that accepts JSON-RPC calls on port `8546`.
+
+## Older installation instructions
+There are more detailed instructions for installing Node.js and Mallet in two places.
 
 First, there are pages on [installing Node.js and Mallet](https://testnet.iohkdev.io/iele/) along with a tutorial.
 
