@@ -1,6 +1,20 @@
 #+TITLE: Mallet end to end tutorial
 #+OPTIONS: toc:nil
 #+EXCLUDE_TAGS: noexport
+#+EXPORT_FILE_NAME: ./2020-05-04_11-00-00_deploying-smart-contracts-en.md
+#+BEGIN_EXPORT md
+---
+title: Mallet end to end tutorial
+description: KEVM getting started
+parent: 2020-05-04_11-00-00_getting-started
+order: 5
+last_updated: "2020-12-17T09:00:00+01:00"
+redirects:
+  - from: /en/kevm/get-started/deploying-smart-contracts/
+    type: "301"
+---
+
+#+END_EXPORT
 
 * Note for Mallet Developers                                       :noexport:
 In order to keep the documentation up to date, It was necessary to have "testing"
@@ -18,7 +32,9 @@ Of course it also generates the tutorial, which was the original purpose.
 To generate the files, you only need to:
 #+begin_example
 /bin/rm -rf ./mallet
-/usr/bin/emacs ./mallet_end_to_end_tutorial.org --batch --eval "(require 'org)" --eval '(org-md-export-to-markdown)' --eval '(org-babel-tangle-file "mallet_end_to_end_tutorial.org")'
+/usr/bin/emacs ./mallet_end_to_end_tutorial.org --batch --eval "(require 'org)" \
+--eval '(org-md-export-to-markdown)' \
+--eval '(org-babel-tangle-file "mallet_end_to_end_tutorial.org")'
 #+end_example
 
 ** test_installation.sh
@@ -40,13 +56,20 @@ IFS=$'\n\t'
 ** test_smartcontract_deploy.js
 Is designed to be executed within Mallet.
 So one needs to execute as:
-#+begin_example
+#+begin_src :tangle test_smartcontract_deploy.js :noweb no-export
  cd ./mallet/
  mallet kevm -d ./my_data/
  mallet> .load ../test_smartcontract_deploy.js
-#+end_example
+#+end_src
 
-** Generate the article
+** Move tutorial to the testnet repo
+   The export command leaves the article in the current directory but it should live in testnets repo.
+
+   #+begin_src sh
+   mv 2020-05-04_11-00-00_deploying-smart-contracts-en.md ~/testnets-cardano-org/resources/content/articles/en/
+   #+end_src
+
+
 
 * Prerequisites Installation
 
@@ -306,7 +329,11 @@ reflects how they are used.
 **** Create an account
 
 #+NAME: mallet_newAccount
-#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+#+begin_src js :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+//execute inthe Mallet Repl
+//mallet kevm -d ./my_data/
+//mallet> .load ../test_smartcontract_deploy.js
+
 myAccount = newAccount()
 #+end_src
 
