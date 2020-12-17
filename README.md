@@ -1,7 +1,7 @@
 
 ## Mallet
 
-Mallet, the minimum wallet, is a command line utility for deploying smart contracts and interacting with the [Cardano IELE and KEVM testnets](https://testnet.iohkdev.io/) developed by IOHK. Mallet is written in Javascript and is based on the Node.js REPL, so it gives access to some handy functions as well as libraries such as Web3. Mallet can also be included as a library in your own JavaScript programs.
+Mallet, the minimum wallet, is a command line utility for deploying smart contracts and interacting with the [Cardano IELE and KEVM testnets](https://developers.cardano.org/en/virtual-machines/kevm/overview/) developed by IOHK. Mallet is written in Javascript and is based on the Node.js REPL, so it gives access to some handy functions as well as libraries such as Web3. Mallet can also be included as a library in your own JavaScript programs.
 
 ## Installing
 
@@ -21,25 +21,17 @@ Now using node v10.16.3 (npm v6.14.5)
 
 $ npm install
 
-$ ./mallet -d . http://127.0.0.1:8546
+$ ./mallet kevm  #Or ./mallet -d . http://127.0.0.1:8546 if you have a local Mantis client
 ```
 
 The last step uses mallet to connect to a local Mantis client that accepts JSON-RPC calls on port `8546`.
 
-## Older installation instructions
+## Step by step installation
 There are more detailed instructions for installing Node.js and Mallet in two places.
 
-First, there are pages on [installing Node.js and Mallet](https://testnet.iohkdev.io/iele/) along with a tutorial.
+First, there are pages on [installing Node.js and Mallet](https://testnets.cardano.org/en/virtual-machines/kevm/getting-started/testnet-wallet/) along with a tutorial.
 
 Second, there is a video, [Getting Started with Mallet](https://www.youtube.com/watch?v=Tp4Z0RbjSa8). 
-
-Once you have Node.js installed, run:
-
-```
-$ npm install -g --engine-strict @iohk/mallet
-```
-
-This will download and install all the dependencies. The --engine-strict flag makes sure you have the required version of Node installed.
 
 ## Running the command line interface
 
@@ -52,7 +44,7 @@ $ mallet --help
 Running Mallet with proper arguments will open a Node.js REPL session with the Mallet commands available. 
 
 ```
-mallet iele
+mallet kevm
 ```
 
 Everything has to be valid JavaScript:
