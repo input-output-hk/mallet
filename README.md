@@ -1,7 +1,7 @@
 
 ## Mallet
 
-Mallet, the minimum wallet, is a command line utility for deploying smart contracts and interacting with the [Cardano IELE and KEVM testnets](https://testnet.iohkdev.io/) developed by IOHK. Mallet is written in Javascript and is based on the Node.js REPL, so it gives access to some handy functions as well as libraries such as Web3. Mallet can also be included as a library in your own JavaScript programs.
+Mallet, the minimum wallet, is a command line utility for deploying smart contracts and interacting with the [Cardano IELE and KEVM testnets](https://developers.cardano.org/en/virtual-machines/welcome/) developed by IOHK. Mallet is written in Javascript and is based on the Node.js REPL, so it gives access to some handy functions as well as libraries such as Web3. Mallet can also be included as a library in your own JavaScript programs.
 
 ## Installing
 
@@ -29,7 +29,7 @@ The last step uses mallet to connect to a local Mantis client that accepts JSON-
 ## Older installation instructions
 There are more detailed instructions for installing Node.js and Mallet in two places.
 
-First, there are pages on [installing Node.js and Mallet](https://testnet.iohkdev.io/iele/) along with a tutorial.
+First, there are pages on [installing Node.js and Mallet](https://developers.cardano.org/en/virtual-machines/kevm/getting-started/mallet-end-to-end/) along with a tutorial.
 
 Second, there is a video, [Getting Started with Mallet](https://www.youtube.com/watch?v=Tp4Z0RbjSa8). 
 
@@ -463,10 +463,10 @@ in your script. See [test/basic-kevm.js](test/basic-kevm.js) for an example of u
 
 As mentioned before, the IELE testnet pages have detailed instructions and a rather good video:
 
-* Installing Node.js and Mallet, plus a tutorial from: https://testnet.iohkdev.io/iele/
+* Installing Node.js and Mallet, plus a tutorial from: https://developers.cardano.org/en/virtual-machines/kevm/getting-started/mallet-end-to-end/
 
 * Getting Started with Mallet video: https://www.youtube.com/watch?v=Tp4Z0RbjSa8
 
 * The Mallet repository is here: https://github.com/input-output-hk/mallet
 
-* IOHK provides support on using IELE and the testnet. Details at: https://testnet.iohkdev.io/iele/resources/support-and-help/
+* IOHK provides support on using IELE and the testnet. Details at: https://developers.cardano.org/en/virtual-machines/iele/resources/support-and-help/
