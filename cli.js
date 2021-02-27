@@ -15,6 +15,7 @@ const exportedProperties = [
   'listAccounts', 
   'newAccount',
   'importPrivateKey',
+  'recoverPrivateKey',
   'getBalance',
   'getNonce',
   'selectAccount',
