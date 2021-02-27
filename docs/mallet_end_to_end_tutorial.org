@@ -1,0 +1,674 @@
+#+TITLE: Mallet end to end tutorial
+#+OPTIONS: toc:nil
+#+EXCLUDE_TAGS: noexport
+#+EXPORT_FILE_NAME: ./2020-05-04_11-00-00_deploying-smart-contracts-en.md
+#+BEGIN_EXPORT md
+---
+title: Mallet end to end tutorial
+description: KEVM getting started
+parent: 2020-05-04_11-00-00_getting-started
+order: 5
+last_updated: "2020-12-17T09:00:00+01:00"
+redirects:
+  - from: /en/kevm/get-started/deploying-smart-contracts/
+    type: "301"
+---
+
+#+END_EXPORT
+
+* Note for Mallet Developers                                       :noexport:
+In order to keep the documentation up to date, It was necessary to have "testing"
+of the documentation.
+That's why, this tutorial was developed using the /literate programming/ style.
+So from this document is possible to generate 3 files
+
+- ~test_installation.sh~ :: Executes prerequisites installation instructions.
+- ~test_smartcontract_deploy.js~ :: which follows all the instructions in Mallet.
+
+Of course it also generates the tutorial, which was the original purpose.
+
+- ~mallet_end_to_end_tutorial.md~ :: this will live in testnets.cardano.org
+
+To generate the files, you only need to:
+#+begin_example
+/bin/rm -rf ./mallet
+/usr/bin/emacs ./mallet_end_to_end_tutorial.org --batch --eval "(require 'org)" \
+--eval '(org-md-export-to-markdown)' \
+--eval '(org-babel-tangle-file "mallet_end_to_end_tutorial.org")'
+#+end_example
+
+** test_installation.sh
+In order to execute the installation instructions
+#+begin_example
+bash ./test_installation.sh
+#+end_example
+
+
+The script comes with  [[http://redsymbol.net/articles/unofficial-bash-strict-mode/][Unofficial Bash Strict Mode]] enabled:
+#+NAME: Installing nodejs on Ubuntu
+#+begin_src sh :session *sh* :exports code :noweb no-export
+#!/bin/bash
+#set +u
+set -xeo pipefail
+IFS=$'\n\t'
+#+end_src
+
+** test_smartcontract_deploy.js
+Is designed to be executed within Mallet.
+So one needs to execute as:
+#+begin_src :tangle test_smartcontract_deploy.js :noweb no-export
+ cd ./mallet/
+ mallet kevm -d ./my_data/
+ mallet> .load ../test_smartcontract_deploy.js
+#+end_src
+
+** Move tutorial to the testnet repo
+   The export command leaves the article in the current directory but it should live in testnets repo.
+
+   #+begin_src sh
+   mv 2020-05-04_11-00-00_deploying-smart-contracts-en.md ~/testnets-cardano-org/resources/content/articles/en/
+   #+end_src
+
+
+
+* Prerequisites Installation
+
+On Linux and Mac, you will require Node.js 10.16.3, or the latest
+version, and the Git tools. For Windows, you will also need the Windows
+Subsystem for Linux (WSL).
+
+For reference this is the official [[https://github.com/nodesource/distributions/blob/master/README.md][nodejs]] documentation.
+
+*** Installing Node.js for Linux and MacOS
+
+**** Open a terminal program and execute:
+
+#+NAME: Installing nodejs on Ubuntu
+#+begin_src sh :session *sh* :exports code :tangle test_installation.sh :comments link :noweb no-export
+curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+sudo apt-get -q install -y nodejs
+#+end_src
+
+**** Verify Node.js is installed with:
+#+begin_src sh :session *sh* :exports both :results value code :tangle test_installation.sh :comments link :noweb no-export
+node --version
+#+end_src
+
+#+RESULTS:
+#+begin_src sh
+v13.14.0
+#+end_src
+
+**** Install ~nvm~ which is a version manager for node.js
+
+#+NAME: installing_nvm
+#+begin_src sh :session *sh* :exports code :results output code :tangle test_installation.sh :comments link :noweb no-export
+curl -s -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+#+end_src
+
+**** Make the ~nvm~ command available in the current session
+#+NAME: nvm_default
+#+begin_src sh :session *sh* :exports code :tangle test_installation.sh :comments link :noweb no-export
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#+end_src
+
+#+RESULTS: nvm_default
+
+**** Verify ~nvm~ is installed
+#+NAME: nvm_check
+#+begin_src sh :session *sh* :exports both :results value code :tangle test_installation.sh :comments link :noweb no-export
+nvm --version
+#+end_src
+
+#+RESULTS: nvm_check
+#+begin_src sh
+0.37.2
+#+end_src
+
+With ~nvm~ working you can install Mallet.
+
+
+*** Installing Mallet 2.0
+    :PROPERTIES:
+    :CUSTOM_ID: installing-mallet-2.0
+    :END:
+
+To get the latest version of Mallet, you first need to clone the
+repository at [[https://github.com/input-output-hk/mallet]], and then
+install with npm.
+
+**** Clone the Mallet git repository
+Open a terminal window and type in:
+
+#+NAME: git_clone
+#+begin_src sh :session *sh* :exports code :results value code :tangle test_installation.sh :comments link :noweb no-export
+git clone https://github.com/input-output-hk/mallet
+#+end_src
+
+
+**** Install specific node version for Mallet
+After cloning the repository, execute:
+#+NAME: cat_nvmrc
+#+begin_src sh :session *sh* :exports both :results value code :tangle test_installation.sh :comments link :noweb no-export
+cd mallet
+
+cat .nvmrc
+#+end_src
+
+#+RESULTS: cat_nvmrc
+#+begin_src sh
+$ $ 10.16.3
+#+end_src
+
+Then install the required node version
+#+NAME: npm_install
+#+begin_src sh :session *sh* :exports code :results value code :tangle test_installation.sh :comments link :noweb no-export
+nvm install 10.16.3
+nvm use --silent
+
+#+end_src
+
+#+RESULTS: npm_install
+#+begin_src sh
+v10.16.3 is already installed.
+Now using node v10.16.3 (npm v6.9.0)
+$ Found '/home/agarciafdz/gh/mallet_tutorial/mallet/.nvmrc' with version <10.16.3>
+Now using node v10.16.3 (npm v6.9.0)
+$ audited 180 packages in 1.416s
+found 1 low severity vulnerability
+  run ~npm audit fix~ to fix them, or ~npm audit~ for details
+#+end_src
+
+**** Download and install Mallet and its dependencies.
+#+NAME: npm_install
+#+begin_src sh :session *sh* :exports both :results value code :tangle test_installation.sh :comments link :noweb no-export
+npm install --silent
+#+end_src
+
+**** Verify Mallet was installed correctly
+Finally, To check your installation, execute Mallet's ~version~:
+#+NAME: mallet_versions
+#+begin_src sh :session *sh* :exports both :results value code :tangle test_installation.sh :comments link :noweb no-export
+./mallet --version
+#+end_src
+
+#+RESULTS: mallet_versions
+#+begin_src sh
+2.1.0
+#+end_src
+
+If the version number displays correctly.
+It means you have successfully installed mallet.
+
+*** Installing the ~solcjs~ compiler
+
+The ~solcjs~ compiler, takes your source code, written in solidity, and creates a binary that file
+that you can later, deploy to the devnet using Mallet.
+
+**** Install ~solcjs~ with ~npm~
+
+#+NAME: installing_solc
+#+begin_src sh :session *sh* :exports code :results output code :tangle test_installation.sh :comments link :noweb no-export
+sudo npm install -g solc
+#+end_src
+
+#+RESULTS: installing_solcjs
+#+begin_src sh
+
+/usr/lib/node_modules/solc/solcjs
++ solc@0.8.0
+updated 1 package in 1.296s
+#+end_src
+
+**** Verify ~solcjs~ was installed
+ #+NAME: verif_solcjs
+ #+begin_src sh :session *sh* :exports both :results output code :tangle test_installation.sh :comments link :noweb no-export
+ solcjs --version
+ #+end_src
+
+ #+RESULTS: verif_solcjs
+ #+begin_src sh
+ 0.8.0+commit.c7dfd78e.Emscripten.clang
+ #+end_src
+
+ Once we get the right version on ~solcjs~ we can go forward to deploy smart contracts.
+
+ If you have problems installing any of the prerequisites (node, Mallet or solcjs),
+ contact the community in Slack:
+ [[https://join.slack.com/t/iohkdevnets/shared_invite/zt-jvy74l5h-Bhp5SQajefwjig72BIl73A][Join IOHK | Devnets on Slack]]
+
+
+
+*** Create a HelloWorld smart contract
+   To deploy your smart contracts on the KEVM devnet and to test Mallet
+   you will need to compile to KEVM (K - Ethereum virtual machine) bytecode.
+   You can compile the bytecode directly with using [[https://github.com/ethereum/solc-js#usage-on-the-command-line][solcjs]].
+
+**** Create a Solidity  file
+Create a ~myContract.sol~ file
+#+NAME: helloWorld_sol
+#+begin_src sh :dir ./mallet :session *sh2* :exports code :results output code :tangle test_installation.sh :comments link :noweb no-export
+cat << EOF >myContract.sol
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.6.0 <0.9.0;
+
+
+contract HelloWorld {
+  function helloWorld() external pure returns (string memory) {
+    return "Hello, World!";
+  }
+}
+EOF
+#+end_src
+
+#+RESULTS: helloWorld_sol
+#+begin_src sh
+#+end_src
+
+**** Compile with ~solcjs~
+#+NAME: compile_helloWorld
+#+begin_src sh :dir ./mallet :session *sh2* :exports code :results output code :tangle test_installation.sh :comments link :noweb no-export
+solcjs --bin --abi --base-path . ./myContract.sol
+#+end_src
+
+#+RESULTS: compile_helloWorld
+#+begin_src sh
+
+" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+/myContract.sol
+#+end_src
+
+**** Verify the compiled file exists
+In your directory now there should be an  ~.bin~ file
+#+NAME: list_helloWorld
+#+begin_src sh :dir ./mallet :session *sh2* :exports both :results output code :tangle test_installation.sh :comments link :noweb no-export
+ls *.bin
+#+end_src
+
+#+RESULTS: list_helloWorld
+#+begin_src sh
+_myContract_sol_HelloWorld.bin
+#+end_src
+
+
+
+
+* Mallet 2.0
+   :PROPERTIES:
+   :CUSTOM_ID: mallet-2.0
+   :END:
+
+Mallet, the minimal wallet, is the command line interface used to send
+transactions, deploy smart contracts, and interact with the IELE and
+KEVM devnets.
+
+
+** Connect to the KEVM devnet
+
+#+NAME: mallet_kevm
+#+begin_src sh :dir ./mallet :session *sh* :exports both :results value code
+./mallet kevm -d ./data
+#+end_src
+
+#+RESULTS: mallet_kevm
+#+begin_src sh
+Mallet 2.1.0 - IELE/KEVM devnet utility
+Type 'help()' to view the online documentation or 'listCommands()' to view available commands
+#+end_src
+
+This will open a session in the read-eval-print-loop (Repl) environment
+for Node.js. Mallet commands are imported automatically.
+
+Everything typed in the Repl has to be valid JavaScript. Technically
+speaking, the commands are simply functions and properties of Mallet
+object. However, we tend to refer to them as commands because that
+reflects how they are used.
+
+** Using the faucet
+**** Create an account
+
+#+NAME: mallet_newAccount
+#+begin_src js :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+//execute inthe Mallet Repl
+//mallet kevm -d ./my_data/
+//mallet> .load ../test_smartcontract_deploy.js
+
+myAccount = newAccount()
+#+end_src
+
+The ~newAccount~ command asks your password, and returns your new account
+address.
+
+#+RESULTS: mallet_newAccount
+#+begin_src sh
+Enter password:     
+Repeat password:     
+'0x45402404f51909b640d03f361c742c38d34bb3e7'
+#+end_src
+
+Note that we are assigning the return value of newAccount to a variable
+named myAccount so that we can refer to it later.
+
+**** Select an account
+Now we will make the account just created active
+#+NAME: mallet_selectAccount
+#+begin_src sh :dir ./mallet :session *sh* :exports both :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+selectAccount(myAccount)
+#+end_src
+
+#+RESULTS: mallet_selectAccount
+#+begin_src sh
+'0x45402404f51909b640d03f361c742c38d34bb3e7'
+#+end_src
+
+**** Verify the balance of your new account
+
+Since the account has just been created its balance should be 0.
+#+NAME: mallet_getBalance_zero
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+getBalance()
+#+end_src
+
+If you don't give any argument, this will return the balance of the
+selected account.
+
+#+RESULTS: mallet_getBalance_zero
+#+begin_src sh
+Uncaught Error: Invalid json RPC response: undefined
+    at Object.InvalidResponse (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/errors.js:38:16)
+    at HttpProvider.send (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/httpprovider.js:102:18)
+    at RequestManager.send (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/requestmanager.js:65:32)
+    at Eth.send [as getBalance] (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/method.js:145:58)
+    at Mallet.getBalance (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/mallet.js:232:26)
+#+end_src
+
+
+**** Request tokens from the faucet with ~requestFunds~
+
+#+NAME: mallet_requestFunds
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+requestFunds()
+#+end_src
+
+#+RESULTS: mallet_requestFunds
+#+begin_src sh
+Uncaught 'Faucet error: undefined'
+#+end_src
+
+It may take a few minutes for the funds to be transferred.
+
+Now that you have created and funded your account, you can compile and
+deploy smart contracts.
+
+**** Check the new balance in the account
+#+NAME: mallet_getBalance_new
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+getBalance()
+#+end_src
+
+#+RESULTS: mallet_getBalance_new
+#+begin_src sh
+/bin/sh: 113: Syntax error: "(" unexpected
+#+end_src
+
+
+** Bring the compiled smart contract into Mallet
+   Using the ~_myContract_HelloWorld.bin~ created in the step:
+   [[Create a HelloWorld smart contract]]
+   you can now import it to mallet
+
+**** Import the ~fileSystem~ module
+ #+NAME: mallet_import_fs
+ #+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+fs = require("fs");
+#+end_src
+
+#+RESULTS: mallet_import_fs
+#+begin_src sh
+{
+  appendFile: [Function: appendFile],
+  appendFileSync: [Function: appendFileSync],
+  access: [Function: access],
+  accessSync: [Function: accessSync],
+  chown: [Function: chown],
+  chownSync: [Function: chownSync],
+  chmod: [Function: chmod],
+  chmodSync: [Function: chmodSync],
+  close: [Function: close],
+  closeSync: [Function: closeSync],
+  copyFile: [Function: copyFile],
+  copyFileSync: [Function: copyFileSync],
+  createReadStream: [Function: createReadStream],
+  createWriteStream: [Function: createWriteStream],
+  exists: [Function: exists],
+  existsSync: [Function: existsSync],
+  fchown: [Function: fchown],
+  fchownSync: [Function: fchownSync],
+  fchmod: [Function: fchmod],
+  fchmodSync: [Function: fchmodSync],
+  fdatasync: [Function: fdatasync],
+  fdatasyncSync: [Function: fdatasyncSync],
+  fstat: [Function: fstat],
+  fstatSync: [Function: fstatSync],
+  fsync: [Function: fsync],
+  fsyncSync: [Function: fsyncSync],
+  ftruncate: [Function: ftruncate],
+  ftruncateSync: [Function: ftruncateSync],
+  futimes: [Function: futimes],
+  futimesSync: [Function: futimesSync],
+  lchown: [Function: lchown],
+  lchownSync: [Function: lchownSync],
+  lchmod: undefined,
+  lchmodSync: undefined,
+  link: [Function: link],
+  linkSync: [Function: linkSync],
+  lstat: [Function: lstat],
+  lstatSync: [Function: lstatSync],
+  mkdir: [Function: mkdir],
+  mkdirSync: [Function: mkdirSync],
+  mkdtemp: [Function: mkdtemp],
+  mkdtempSync: [Function: mkdtempSync],
+  open: [Function: open],
+  openSync: [Function: openSync],
+  opendir: [Function: opendir],
+  opendirSync: [Function: opendirSync],
+  readdir: [Function: readdir],
+  readdirSync: [Function: readdirSync],
+  read: [Function: read],
+  readSync: [Function: readSync],
+  readv: [Function: readv],
+  readvSync: [Function: readvSync],
+  readFile: [Function: readFile],
+  readFileSync: [Function: readFileSync],
+  readlink: [Function: readlink],
+  readlinkSync: [Function: readlinkSync],
+  realpath: [Function: realpath] { native: [Function (anonymous)] },
+  realpathSync: [Function: realpathSync] { native: [Function (anonymous)] },
+  rename: [Function: rename],
+  renameSync: [Function: renameSync],
+  rmdir: [Function: rmdir],
+  rmdirSync: [Function: rmdirSync],
+  stat: [Function: stat],
+  statSync: [Function: statSync],
+  symlink: [Function: symlink],
+  symlinkSync: [Function: symlinkSync],
+  truncate: [Function: truncate],
+  truncateSync: [Function: truncateSync],
+  unwatchFile: [Function: unwatchFile],
+  unlink: [Function: unlink],
+  unlinkSync: [Function: unlinkSync],
+  utimes: [Function: utimes],
+  utimesSync: [Function: utimesSync],
+  watch: [Function: watch],
+  watchFile: [Function: watchFile],
+  writeFile: [Function: writeFile],
+  writeFileSync: [Function: writeFileSync],
+  write: [Function: write],
+  writeSync: [Function: writeSync],
+  writev: [Function: writev],
+  writevSync: [Function: writevSync],
+  Dir: [Function: Dir],
+  Dirent: [Function: Dirent],
+  Stats: [Function: Stats],
+  ReadStream: [Getter/Setter],
+  WriteStream: [Getter/Setter],
+  FileReadStream: [Getter/Setter],
+  FileWriteStream: [Getter/Setter],
+  _toUnixTimestamp: [Function: toUnixTimestamp],
+  F_OK: 0,
+  R_OK: 4,
+  W_OK: 2,
+  X_OK: 1,
+  constants: [Object: null prototype] {
+    UV_FS_SYMLINK_DIR: 1,
+    UV_FS_SYMLINK_JUNCTION: 2,
+    O_RDONLY: 0,
+    O_WRONLY: 1,
+    O_RDWR: 2,
+    UV_DIRENT_UNKNOWN: 0,
+    UV_DIRENT_FILE: 1,
+    UV_DIRENT_DIR: 2,
+    UV_DIRENT_LINK: 3,
+    UV_DIRENT_FIFO: 4,
+    UV_DIRENT_SOCKET: 5,
+    UV_DIRENT_CHAR: 6,
+    UV_DIRENT_BLOCK: 7,
+    S_IFMT: 61440,
+    S_IFREG: 32768,
+    S_IFDIR: 16384,
+    S_IFCHR: 8192,
+    S_IFBLK: 24576,
+    S_IFIFO: 4096,
+    S_IFLNK: 40960,
+    S_IFSOCK: 49152,
+    O_CREAT: 64,
+    O_EXCL: 128,
+    UV_FS_O_FILEMAP: 0,
+    O_NOCTTY: 256,
+    O_TRUNC: 512,
+    O_APPEND: 1024,
+    O_DIRECTORY: 65536,
+    O_NOATIME: 262144,
+    O_NOFOLLOW: 131072,
+    O_SYNC: 1052672,
+    O_DSYNC: 4096,
+    O_DIRECT: 16384,
+    O_NONBLOCK: 2048,
+    S_IRWXU: 448,
+    S_IRUSR: 256,
+    S_IWUSR: 128,
+    S_IXUSR: 64,
+    S_IRWXG: 56,
+    S_IRGRP: 32,
+    S_IWGRP: 16,
+    S_IXGRP: 8,
+    S_IRWXO: 7,
+    S_IROTH: 4,
+    S_IWOTH: 2,
+    S_IXOTH: 1,
+    F_OK: 0,
+    R_OK: 4,
+    W_OK: 2,
+    X_OK: 1,
+    UV_FS_COPYFILE_EXCL: 1,
+    COPYFILE_EXCL: 1,
+    UV_FS_COPYFILE_FICLONE: 2,
+    COPYFILE_FICLONE: 2,
+    UV_FS_COPYFILE_FICLONE_FORCE: 4,
+    COPYFILE_FICLONE_FORCE: 4
+  },
+  promises: [Getter]
+}
+#+end_src
+
+**** Read the contents of the binary file
+
+#+NAME: mallet_myContract
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+myContract = fs.readFileSync('_myContract_sol_HelloWorld.bin', 'utf8');
+#+end_src
+
+#+RESULTS: mallet_myContract
+#+begin_src sh
+'60806040523480156100115760006000fd5b50610017565b610196806100266000396000f3fe60806040523480156100115760006000fd5b50600436106100305760003560e01c8063c605f76c1461003657610030565b60006000fd5b61003e610054565b60405161004b91906100d7565b60405180910390f35b60606040518060400160405280600d81526020017f48656c6c6f2c20576f726c6421000000000000000000000000000000000000008152602001509050610096565b905661015f565b60006100a8826100fa565b6100b28185610106565b93506100c2818560208601610118565b6100cb8161014d565b84019150505b92915050565b600060208201905081810360008301526100f1818461009d565b90505b92915050565b6000815190505b919050565b60008282526020820190505b92915050565b60005b838110156101375780820151818401525b60208101905061011b565b83811115610146576000848401525b505b505050565b6000601f19601f83011690505b919050565bfea264697066735822122026063cff2b52ca811ed1e0588b6fda875d4b697ed4748602f2874c17aced5ba664736f6c63430008000033'
+#+end_src
+
+** Deploying smart contracts
+   :PROPERTIES:
+   :CUSTOM_ID: deploying-smart-contracts-1
+   :END:
+
+Now that you have the bytecode from ~solcjs~, the next step is simply to deploy it:
+
+**** Prepare the transaction to deploy the contract
+#+NAME: mallet_tx
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+tx = { gas: 470000, data: myContract}
+#+end_src
+
+#+RESULTS: mallet_tx
+#+begin_src sh
+{
+  gas: 470000,
+  data: '60806040523480156100115760006000fd5b50610017565b610196806100266000396000f3fe60806040523480156100115760006000fd5b50600436106100305760003560e01c8063c605f76c1461003657610030565b60006000fd5b61003e610054565b60405161004b91906100d7565b60405180910390f35b60606040518060400160405280600d81526020017f48656c6c6f2c20576f726c6421000000000000000000000000000000000000008152602001509050610096565b905661015f565b60006100a8826100fa565b6100b28185610106565b93506100c2818560208601610118565b6100cb8161014d565b84019150505b92915050565b600060208201905081810360008301526100f1818461009d565b90505b92915050565b6000815190505b919050565b60008282526020820190505b92915050565b60005b838110156101375780820151818401525b60208101905061011b565b83811115610146576000848401525b505b505050565b6000601f19601f83011690505b919050565bfea264697066735822122026063cff2b52ca811ed1e0588b6fda875d4b697ed4748602f2874c17aced5ba664736f6c63430008000033'
+}
+#+end_src
+
+**** Send transaction with the smart contract
+#+NAME: mallet_sendTransaction
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+    deploymentHash = sendTransaction(tx)
+#+end_src
+
+
+#+RESULTS: mallet_sendTransaction
+#+begin_src sh
+Enter password:     
+Uncaught Error: Invalid JSON RPC response: undefined
+    at Object.InvalidResponse (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/errors.js:38:16)
+    at HttpProvider.send (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/httpprovider.js:102:18)
+    at RequestManager.send (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/requestmanager.js:65:32)
+    at Eth.send [as getTransactionCount] (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/web3/web3/method.js:145:58)
+    at Mallet.getNonce (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/mallet.js:285:26)
+    at Mallet.sendTransaction (/home/agarciafdz/repos/gh/elviejo79/mallet_tutorial/mallet/lib/mallet.js:296:46)
+#+end_src
+
+you will get back the tx hash on which it was deployed.
+
+**** View receipt
+
+You can view details with the following command:
+#+NAME: mallet_getReceipt
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+getReceipt(deploymentHash)
+#+end_src
+
+**** Save your contract address
+To save your contract address, create a variable that takes the return value of getReceipt().
+
+#+NAME: mallet_myContractAddress
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+myContractAddress = getReceipt(deploymentHash).contractAddress
+#+end_src
+
+
+**** Test your smart contract
+#+NAME: mallet_myContractAddress
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code :tangle test_smartcontract_deploy.js :noweb no-export
+sendTransaction({to: myContractAddress,gas:10000,arguments: []})
+#+end_src
+
+
+
+** Getting help
+
+When running Mallet in the command-line interface, the help command can
+be useful. This opens the *Readme file* in your default web browser:
+
+#+NAME: mallet_help
+#+begin_src sh :dir ./mallet :session *sh* :exports code :results output code
+help()
+#+end_src
+
+Or you can [[https://join.slack.com/t/iohkdevnets/shared_invite/zt-jvy74l5h-Bhp5SQajefwjig72BIl73A][Join IOHK | Devnets on Slack]], where the community helps each other
